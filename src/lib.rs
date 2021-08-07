@@ -239,7 +239,7 @@ impl State {
         }
         self.color = color;
 
-        let text = format!("#{:x}{:x}{:x}", color.0, color.1, color.2);
+        let text = format!("#{:02x}{:02x}{:02x}", color.0, color.1, color.2);
         self.elements
             .body
             .style()
