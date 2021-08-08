@@ -4,8 +4,8 @@ use std::collections::VecDeque;
 use std::rc::Rc;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
-use web_sys::{Document, Element, HtmlElement, HtmlInputElement, HtmlButtonElement};
-const COLOR_MAP: [(&str, (u16, u16, u16)); 8] = [
+use web_sys::{Document, Element, HtmlButtonElement, HtmlElement, HtmlInputElement};
+const COLOR_MAP: [(&str, (u8, u8, u8)); 8] = [
     ("black", (0, 0, 0)),
     ("red", (255, 0, 0)),
     ("green", (0, 255, 0)),
@@ -185,9 +185,7 @@ pub fn run() -> Result<(), JsValue> {
         let red = rng.gen();
         let green = rng.gen();
         let blue = rng.gen();
-        state_ref
-            .borrow_mut()
-            .set_smash((red, green, blue));
+        state_ref.borrow_mut().set_smash((red, green, blue));
         red_smash.set_value(&red.to_string());
         green_smash.set_value(&green.to_string());
         blue_smash.set_value(&blue.to_string());
@@ -218,11 +216,26 @@ pub fn run() -> Result<(), JsValue> {
 }
 
 impl State {
-    fn smash(&mut self, color: &(u16, u16, u16)) {
+    fn smash(&mut self, color: &(u8, u8, u8)) {
+        let color1 = ((7 * self.color.0 as u16 + color.0 as u16) / 8) as u8;
+        let color2 = ((7 * self.color.1 as u16 + color.1 as u16) / 8) as u8;
+        let color3 = ((7 * self.color.2 as u16 + color.2 as u16) / 8) as u8;
         self.set_background_color_and_update((
-            ((7 * self.color.0 as u16 + color.0) / 8) as u8,
-            ((7 * self.color.1 as u16 + color.1) / 8) as u8,
-            ((7 * self.color.2 as u16 + color.2) / 8) as u8,
+            if color1 == self.color.0 {
+                color.0
+            } else {
+                color1
+            },
+            if color2 == self.color.1 {
+                color.1
+            } else {
+                color2
+            },
+            if color3 == self.color.2 {
+                color.2
+            } else {
+                color3
+            },
         ));
     }
 
